@@ -1,0 +1,19 @@
+.idea/
+sql/
+.vscode/
+*.iml
+.remote-sync.json
+#fe module
+node_modules/
+.DS_Store
+# Compiled Files #
+*.class
+*.jar
+*.war
+*.ear
+#*.php
+# virtual machine crash logs
+hs_err_pid*
+
+#cache
+Runtime
