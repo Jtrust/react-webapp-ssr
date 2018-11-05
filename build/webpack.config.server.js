@@ -1,7 +1,9 @@
 const path = require('path')
 // const HtmlWebpackPlugin = require('html-webpack-plugin')    // SSR 不需要生html文件
+const isDev = process.env.NODE_ENV === 'development'
 
 module.exports = {
+    mode: isDev ? 'development' : 'production',
     entry: {
         index:  path.join(__dirname, '../client/server-entry.js'),
     },
@@ -16,17 +18,13 @@ module.exports = {
     },
     module: {
         rules: [
-            /*{
-                enforce: 'pre',
-                test: /.(js|jsx)$/,
-                use: ['eslint-loader',],
-                exclude: [
-                    path.resolve(__dirname, '../node_modules')
-                ]
-            },*/
+
             {
                 test: /.jsx$/,
-                use: ['babel-loader']
+                use: ['babel-loader'],
+                exclude: [
+                    path.join(__dirname, '../node_modules')
+                ]
             },
             {
                 test: /.js$/,
