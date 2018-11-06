@@ -1,9 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import App from './App.jsx'
+import App from './App'
 
 // 使用 ReactDOM.render() 来混合服务端渲染的容器已经被弃用，并且会在React 17 中删除。使用hydrate() i来代替。
-ReactDOM.hydrate(<App/>,document.getElementById('root'))
-if(module.hot){
-    module.hot.accept();
+ReactDOM.hydrate(<App />, document.getElementById('root'))
+if (module.hot) {
+  module.hot.accept();
 }
