@@ -12,6 +12,10 @@ npm i http-proxy-middleware -D
 ```
 - eslint 相关依赖
 ```
-npm i babel-eslint eslint-config-airbnb eslint-config-standard eslint-loader eslint-plugin-import eslint-plugin-jsx-a11y eslint-
+npm i babel-eslint eslint-config-airbnb eslint-config-standard eslint-loader eslint-plugin-import eslint-import-resolver-webpack eslint-plugin-jsx-a11y eslint-
 plugin-promise eslint-plugin-react eslint-plugin-node eslint-plugin-standard -D
+```
+- husky提交代码前执行
+```
+npm i husky -D
 ```
