@@ -2,10 +2,13 @@ const express = require('express')
 const ReactSSR = require('react-dom/server')
 const fs = require('fs')
 const path = require('path')
+const favicon = require('serve-favicon')
 
 const isDev = process.env.NODE_ENV === 'development'
-
+console.log (666666666,process.env.NODE_ENV);
 const app = express()
+// app.use(favicon(path.join(__dirname, 'public', '../favicon.ico')))  // 可配置publicPath
+app.use(favicon(path.join(__dirname, '../favicon.ico')))
 
 
 if (!isDev) {

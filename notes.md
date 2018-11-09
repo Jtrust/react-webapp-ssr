@@ -19,3 +19,7 @@ plugin-promise eslint-plugin-react eslint-plugin-node eslint-plugin-standard -D
 ```
 npm i husky -D
 ```
+- nodemon 当服务端代码修改时，为避免手动重启服务，nodemon支持 写一个脚本去自动重启服务
+```
+npm i nodemon -D
+```
