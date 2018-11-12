@@ -23,3 +23,12 @@ npm i husky -D
 ```
 npm i nodemon -D
 ```
+- mobx-react 连接mobx和react应用
+```
+npm i  mobx mobx-react -S
+
+```
+- 编译装饰器
+```
+npm i @babel/plugin-proposal-decorators @babel/plugin-proposal-class-properties -D
+```
