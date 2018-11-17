@@ -3,12 +3,31 @@ const ReactSSR = require('react-dom/server')
 const fs = require('fs')
 const path = require('path')
 const favicon = require('serve-favicon')
+const bodyParser = require('body-parser')
+const session = require('express-session')
 
 const isDev = process.env.NODE_ENV === 'development'
-console.log (666666666,process.env.NODE_ENV);
+
 const app = express()
+
+// 对post请求的请求体进行解析
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(session({
+  maxAge: 10 * 60 * 1000, // 有效期，单位是毫秒
+  name: 'tid', // 存cookie id到浏览器端
+  resave: false, // 是否每次请求都重新生成cookie id
+  saveUninitialized: false, // 是否自动保存未初始化的会话，建议false
+  secret: 'react ssr', // 用来对session id相关的cookie进行签名
+
+}));
+
 // app.use(favicon(path.join(__dirname, 'public', '../favicon.ico')))  // 可配置publicPath
 app.use(favicon(path.join(__dirname, '../favicon.ico')))
+
+app.use('/api/user', require('./util/handle-login'))
+app.use('/api', require('./util/proxy'))
 
 
 if (!isDev) {
@@ -23,7 +42,7 @@ if (!isDev) {
   app.get('*', (req, res) => {
     const appString = ReactSSR.renderToString(serverEntry)
     const str = template.replace('<!-- app -->', appString)
-    console.log(str);
+
     res.send(template.replace('<!-- app -->', appString))
   })
 } else {

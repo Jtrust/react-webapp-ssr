@@ -15,9 +15,16 @@ const config = webpackMerge(baseConfig, {
   output: {
     filename: '[name].[hash].js',
   },
+
   plugins: [
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, '../client/template.html'),
+    }),
+    new HtmlWebpackPlugin({
+      // 指定loader：ejs-compiled-loader
+      template: `!!ejs-compiled-loader!${path.resolve(__dirname, '../client/server.template.ejs')}`,
+      // template: path.resolve(__dirname, '../client/server.template.ejs'),
+      filename: 'server.ejs',
     }),
   ],
 })
@@ -35,6 +42,9 @@ if (isDev) {
     open: true,
     overlay: {
       error: true,
+    },
+    proxy: {
+      '/api': 'http://localhost:3333',
     },
 
   }

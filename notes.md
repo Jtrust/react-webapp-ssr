@@ -32,3 +32,7 @@ npm i  mobx mobx-react -S
 ```
 npm i @babel/plugin-proposal-decorators @babel/plugin-proposal-class-properties -D
 ```
+
+``` 
+npm i react-async-bootstrapper -S
+```
