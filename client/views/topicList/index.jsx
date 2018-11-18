@@ -4,6 +4,7 @@ import {
   inject, // 把Provider提供的数据 注入到组件内部
 } from 'mobx-react'
 import PropTypes from 'prop-types';
+import Helmet from 'react-helmet';
 import AppState from '../../store/appStore';
 
 // 在组件上使用 <Provider appState={appState}></Provider>传下来的数据
@@ -19,7 +20,7 @@ class TopicList extends React.Component {
    * 此方法常用于 数据初始化
    * @returns {Promise<any>}
    */
-  asyncBootstrap() {
+  bootstrap() {
     return new Promise((resolve) => {
       setTimeout(() => {
         const { appState } = this.props
@@ -38,6 +39,10 @@ class TopicList extends React.Component {
     const { appState } = this.props
     return (
       <div>
+        <Helmet>
+          <title>topicList</title>
+          <meta name="description" content="this is topicList" />
+        </Helmet>
         <input type="text" onChange={this.changeName.bind(this)} />
         <span>{appState.msg}</span>
 

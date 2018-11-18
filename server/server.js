@@ -6,6 +6,8 @@ const favicon = require('serve-favicon')
 const bodyParser = require('body-parser')
 const session = require('express-session')
 
+const serverRender = require('./util/server-render')
+
 const isDev = process.env.NODE_ENV === 'development'
 
 const app = express()
@@ -32,23 +34,29 @@ app.use('/api', require('./util/proxy'))
 
 if (!isDev) {
   // 引入服务端代码
-  const serverEntry = require('../dist/server-entry').default
+  const serverEntry = require('../dist/server-entry')
   // 同步读取
-  const template = fs.readFileSync(path.join(__dirname, '../dist/index.html'), 'utf8') // 指定'utf8',读出来才是string类型
+  const template = fs.readFileSync(path.join(__dirname, '../dist/server.ejs'), 'utf8') // 指定'utf8',读出来才是string类型
   // 如果请求 public目录下的静态资源，则 全部映射到  dist目录
   app.use('/public', express.static(path.join(__dirname, '../dist')))
 
   // 客户端的任何请求 都返回服务端代码
-  app.get('*', (req, res) => {
-    const appString = ReactSSR.renderToString(serverEntry)
+  app.get('*', (req, res, next) => {
+    serverRender(serverEntry, template, req, res).catch(next)
 
-    res.send(template.replace('<!-- app -->', appString))
+    // const appString = ReactSSR.renderToString(serverEntry)
+    // res.send(template.replace('<!-- app -->', appString))
   })
 } else {
   const devStatic = require('./util/dev-static')
   devStatic(app)
 }
 
+// 全局的错误处理中间件
+app.use((error, req, res, next) => {
+  console.log(error);
+  res.status(500).send(error)
+})
 
 app.listen(3333, () => {
   console.log('server is listening on 3333');

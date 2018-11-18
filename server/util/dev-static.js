@@ -2,11 +2,8 @@ const axios = require('axios')
 const path = require('path')
 const MemoryFs = require('memory-fs') // 在内存中读写
 const webpack = require('webpack')
-const ReactDomServer = require('react-dom/server')
+
 const proxy = require('http-proxy-middleware')
-const asyncBootstrap = require('react-async-bootstrapper')
-const ejs = require('ejs')
-const serialize = require('serialize-javascript')
 
 
 // 启动webpack-dev-server开发过程中  模板文件是不会编译到银盘的，所以要实时获取
@@ -24,6 +21,7 @@ const mfs = new MemoryFs()
 const NativeModule = require('module')
 const vm = require('vm')
 const serverConfig = require('../../build/webpack.config.server')
+const serverRender = require('./server-render')
 
 // webpack.config.server.js配置了externals,使得依赖模块并未打包到 bundle中
 // 所以需要把读取的bundle字符串文件转成模块，以便拿到可执行的js
@@ -44,7 +42,6 @@ const serverCompiler = webpack(serverConfig)
 serverCompiler.outputFileSystem = mfs // 把webpack指向内存读写
 
 let serverBundle
-let createStoreMap
 // 这个compiler监听entry下依赖的文件是否变化，有变化则重新编译，所以拿到的serverBundle也是实时的新文件
 serverCompiler.watch({}, (err, stats) => { // stats是webpack打包过程输出的信息
   if (err) {
@@ -67,43 +64,22 @@ serverCompiler.watch({}, (err, stats) => { // stats是webpack打包过程输出�
   // m._compile(bundle, serverConfig.output.filename) //eslint-disable-line
 
   const m = getModuleFromString(bundle, serverConfig.output.filename)
-  serverBundle = m.exports.default
-  createStoreMap = m.exports.createStoreMap
+  serverBundle = m.exports
 })
 
-const getStoreState = stores => Object.keys(stores).reduce((result, storeName) => {
-  result[storeName] = stores[storeName].toJson()
-  return result
-}, {})
+
 module.exports = function (app) {
   app.use('/public', proxy({ // express的代理中间件
     target: 'http://localhost:8888',
   }))
 
-  app.get('*', (req, res) => {
-    getTemplate().then((template) => {
-      const routerContext = {}
-      const stores = createStoreMap()
-      const appCompt = serverBundle(stores, routerContext, req.url)
+  app.get('*', (req, res, next) => {
+    if (!serverBundle) {
+      return res.send('waiting for compile, refresh later')
+    }
 
-      asyncBootstrap(appCompt).then(() => {
-        if (routerContext.url) { // 如果 客户请求有重定向，则react-router会给routerContext添加一个url属性
-          // 如果重定向  那么直接在服务端redirect
-          res.status(302).setHeader('Location', routerContext.url) // 设置属性  让浏览器自动跳转
-          res.end()
-          return
-        }
-        const state = getStoreState(stores)
-        const content = ReactDomServer.renderToString(appCompt)
-
-        // res.send(template.replace('<!-- app -->', content))
-        const html = ejs.render(template, {
-          appString: content,
-          initialState: serialize(state),
-        })
-
-        res.send(html)
-      })
-    })
+    getTemplate()
+      .then(template => serverRender(serverBundle, template, req, res))
+      .catch(next)
   })
 }
