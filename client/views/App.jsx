@@ -13,7 +13,7 @@ export default class App extends Component {
     return (
       <div>
         <div>
-          <Link to="/">首页</Link>
+          <Link to="/">首页123</Link>
           <br />
           <Link to="/detail">详情页</Link>
         </div>

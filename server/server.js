@@ -41,7 +41,6 @@ if (!isDev) {
   // 客户端的任何请求 都返回服务端代码
   app.get('*', (req, res) => {
     const appString = ReactSSR.renderToString(serverEntry)
-    const str = template.replace('<!-- app -->', appString)
 
     res.send(template.replace('<!-- app -->', appString))
   })

@@ -6,7 +6,7 @@ import {
 } from 'mobx'
 
 export default class AppState {
-  constructor({ count, name } = { count: 0, name: 'Tom' }) {
+  constructor({ count, name } = { count: 3, name: 'Tom' }) {
     this.count = count
     this.name = name
   }

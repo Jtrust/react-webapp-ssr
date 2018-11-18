@@ -7,7 +7,7 @@ const proxy = require('http-proxy-middleware')
 const asyncBootstrap = require('react-async-bootstrapper')
 const ejs = require('ejs')
 const serialize = require('serialize-javascript')
-const serverConfig = require('../../build/webpack.config.server')
+
 
 // 启动webpack-dev-server开发过程中  模板文件是不会编译到银盘的，所以要实时获取
 const getTemplate = () => new Promise((resolve, reject) => {
@@ -19,9 +19,25 @@ const getTemplate = () => new Promise((resolve, reject) => {
 })
 
 
-const Module = module.constructor // module对应module.exports的module。拿到它的构造方法
 const mfs = new MemoryFs()
 
+const NativeModule = require('module')
+const vm = require('vm')
+const serverConfig = require('../../build/webpack.config.server')
+
+// webpack.config.server.js配置了externals,使得依赖模块并未打包到 bundle中
+// 所以需要把读取的bundle字符串文件转成模块，以便拿到可执行的js
+const getModuleFromString = (bundle, filename) => {
+  const m = { exports: {} }
+  const wrapper = NativeModule.wrap(bundle)
+  const script = new vm.Script(wrapper, {
+    filename,
+    displayError: true,
+  })
+  const result = script.runInThisContext()
+  result.call(m.exports, m.exports, require, m)
+  return m
+}
 // 启动一个编译器compiler
 const serverCompiler = webpack(serverConfig)
 // outputFileSystem 是webpack提供的配置项
@@ -34,7 +50,7 @@ serverCompiler.watch({}, (err, stats) => { // stats是webpack打包过程输出�
   if (err) {
     throw err
   }
-  stats = stats.toJson()
+  stats = stats.toJson() //eslint-disable-line
   stats.errors.forEach(error => console.error(error))
   stats.warnings.forEach(warn => console.warn(warn))
 
@@ -44,10 +60,13 @@ serverCompiler.watch({}, (err, stats) => { // stats是webpack打包过程输出�
   )
   // 读取bundle文件
   const bundle = mfs.readFileSync(bundlePath, 'utf8')
-  const m = new Module()
 
+  // const Module = module.constructor // module对应module.exports的module。拿到它的构造方法
+  // const m = new Module()
   // m._compile(bundle,'server-entry.js') //动态编译模块时，要指定文件名
-  m._compile(bundle, serverConfig.output.filename)
+  // m._compile(bundle, serverConfig.output.filename) //eslint-disable-line
+
+  const m = getModuleFromString(bundle, serverConfig.output.filename)
   serverBundle = m.exports.default
   createStoreMap = m.exports.createStoreMap
 })
