@@ -4,6 +4,12 @@ const ejs = require('ejs')
 const Helmet = require('react-helmet').default
 const serialize = require('serialize-javascript')
 
+// import { SheetsRegistry } from 'jss';
+const { SheetsRegistry } = require('jss')
+
+const sheetsRegistry = new SheetsRegistry();
+
+
 const getStoreState = stores => Object.keys(stores).reduce((result, storeName) => {
   result[storeName] = stores[storeName].toJson()
   return result
@@ -13,7 +19,7 @@ module.exports = (bundle, template, req, res) => new Promise((resolve, reject) =
   const createApp = bundle.default
   const routerContext = {}
   const stores = createStoreMap()
-  const appCompt = createApp(stores, routerContext, req.url)
+  const appCompt = createApp(stores, routerContext, req.url, sheetsRegistry)
 
   asyncBootstrap(appCompt).then(() => {
     if (routerContext.url) { // 如果 客户请求有重定向，则react-router会给routerContext添加一个url属性
@@ -25,6 +31,7 @@ module.exports = (bundle, template, req, res) => new Promise((resolve, reject) =
     const helmet = Helmet.rewind()
     const state = getStoreState(stores)
     const content = ReactDomServer.renderToString(appCompt)
+    const css = sheetsRegistry.toString()
 
     // res.send(template.replace('<!-- app -->', content))
     const html = ejs.render(template, {
@@ -34,6 +41,7 @@ module.exports = (bundle, template, req, res) => new Promise((resolve, reject) =
       title: helmet.title.toString(),
       style: helmet.style.toString(),
       link: helmet.link.toString(),
+      materialCss: css,
     })
 
     res.send(html)

@@ -5,6 +5,7 @@ import {
 } from 'mobx-react'
 import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
+import Button from '@material-ui/core/Button';
 import AppState from '../../store/appStore';
 
 // 在组件上使用 <Provider appState={appState}></Provider>传下来的数据
@@ -45,6 +46,7 @@ class TopicList extends React.Component {
         </Helmet>
         <input type="text" onChange={this.changeName.bind(this)} />
         <span>{appState.msg}</span>
+        <Button raised="true" color="primary">click me</Button>
 
       </div>
     )
