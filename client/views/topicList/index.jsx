@@ -8,6 +8,8 @@ import Helmet from 'react-helmet';
 import Button from '@material-ui/core/Button';
 import AppState from '../../store/appStore';
 
+import Container from '../layout/Container'
+
 // 在组件上使用 <Provider appState={appState}></Provider>传下来的数据
 
 @inject('appState') @observer
@@ -39,7 +41,7 @@ class TopicList extends React.Component {
   render() {
     const { appState } = this.props
     return (
-      <div>
+      <Container>
         <Helmet>
           <title>topicList</title>
           <meta name="description" content="this is topicList" />
@@ -48,7 +50,7 @@ class TopicList extends React.Component {
         <span>{appState.msg}</span>
         <Button raised="true" color="primary">click me</Button>
 
-      </div>
+      </Container>
     )
   }
 }

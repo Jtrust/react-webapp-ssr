@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 
 import Routes from '../config/router'
+import AppBar from './layout/AppBar'
 
 
 export default class App extends Component {
@@ -16,6 +17,7 @@ export default class App extends Component {
           <Link to="/">首页123</Link>
           <br />
           <Link to="/detail">详情页</Link>
+          <AppBar />
         </div>
         <Routes />
       </div>

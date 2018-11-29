@@ -9,7 +9,7 @@ import {
   createMuiTheme,
   createGenerateClassName,
 } from '@material-ui/core/styles';
-import { green, red } from '@material-ui/core/colors';
+import { pink } from '@material-ui/core/colors';
 
 import AppState from './store/appStore'
 import App from './views/App'
@@ -34,8 +34,13 @@ class Main extends React.Component {
 
 const theme = createMuiTheme({
   palette: {
-    primary: green,
-    accent: red,
+    primary: {
+      main: '#1b5e20',
+    },
+    secondary: {
+      main: '#37474F',
+    },
+    accent: pink,
     type: 'light',
   },
   typography: {

@@ -30,6 +30,7 @@ const config = webpackMerge(baseConfig, {
 })
 
 if (isDev) {
+  config.devtool = '#cheap-modules-eval-source-map'
   config.devServer = {
     host: '0.0.0.0', // 可通过127.0.0.1  localhost  或者 局域网本机ip访问
     port: '8888',

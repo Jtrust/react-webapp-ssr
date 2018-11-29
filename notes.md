@@ -38,6 +38,6 @@ npm i react-async-bootstrapper -S
 ```
 - Material UI
 ```angular2html
-npm i @material-ui/core react-jss jss -S
+npm i @material-ui/core react-jss jss  @material-ui/icons -S
 
 ```

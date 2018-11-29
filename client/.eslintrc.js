@@ -26,6 +26,7 @@ module.exports = {
     "semi": [0],
     "react/jsx-filename-extension": [0],
     "react/require-default-props": [0],
+    "react/forbid-prop-types": [0],
 
   }
 }
