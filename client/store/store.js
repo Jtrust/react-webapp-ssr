@@ -1,12 +1,14 @@
-import AppStateClass from './appStore'
+import AppState from './appStore'
+import TopicStore from './topicStore'
 
-export const AppState = AppStateClass
+export { AppState, TopicStore }
 
 export default {
-  AppState,
+  AppState, TopicStore,
 }
 
 // 给服务端渲染使用
 export const createStoreMap = () => ({
   appState: new AppState(),
+  topicState: new TopicStore(),
 })

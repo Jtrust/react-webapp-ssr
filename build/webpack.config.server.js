@@ -1,5 +1,6 @@
 const path = require('path')
 // const HtmlWebpackPlugin = require('html-webpack-plugin')    // SSR 不需要生html文件
+const webpack = require('webpack')
 const webpackMerge = require('webpack-merge')
 const baseConfig = require('./webpack.base')
 
@@ -18,5 +19,9 @@ module.exports = webpackMerge(baseConfig, {
     filename: 'server-entry.js',
     libraryTarget: 'commonjs2', // 指定模块化规范
   },
-
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env.API_BASE': '"http://127.0.0.1:3333"',
+    }),
+  ],
 })

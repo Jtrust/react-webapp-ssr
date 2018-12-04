@@ -9,6 +9,8 @@ import IconButton from '@material-ui/core/IconButton';
 import HomeIcon from '@material-ui/icons/Home';
 import Typography from '@material-ui/core/Typography'
 
+// import logo from './cnodejs_light.svg'
+
 const styles = {
   root: {
     width: '100%',
