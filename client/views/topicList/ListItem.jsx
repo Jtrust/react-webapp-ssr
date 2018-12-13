@@ -9,16 +9,24 @@ import Avatar from '@material-ui/core/Avatar';
 // import ListItemIcon from '@material-ui/core/ListItemIcon';
 // import IconHome from '@material-ui/icons/Home';
 // import FolderIcon from '@material-ui/icons/Folder';
-
+import cx from 'classnames'
+import { TABS } from '../../util/variable-define'
 
 import { topicPrimaryStyle, topicSecondaryStyle } from './styles'
 
-const Primary = ({ topic, classes }) => (
-  <span className={classes.root}>
-    <span className={classes.tab}>{topic.tab}</span>
-    <span className={classes.title}>{topic.title}</span>
-  </span>
-)
+
+const Primary = ({ topic, classes }) => {
+  const className = cx({
+    [classes.tab]: true,
+    [classes.top]: topic.top,
+  })
+  return (
+    <span className={classes.root}>
+      <span className={className}>{topic.top ? '置顶' : TABS[topic.tab]}</span>
+      <span className={classes.title}>{topic.title}</span>
+    </span>
+  )
+}
 const Secondary = ({ topic, classes }) => (
   <span className={classes.root}>
     <span className={classes.userName}>{topic.author.loginname}</span>

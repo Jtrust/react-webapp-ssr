@@ -11,11 +11,11 @@ export const topicPrimaryStyle = theme => ({
     color: '#555',
   },
   tab: {
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: theme.palette.gray,
     textAlign: 'center',
     display: 'inline-block',
     padding: '0 6px',
-    color: '#fff',
+    color: '#999',
     borderRadius: 3,
     marginRight: 10,
     fontSize: '12px',
@@ -25,7 +25,8 @@ export const topicPrimaryStyle = theme => ({
     backgroundColor: theme.palette.accent[600],
   },
   top: {
-    backgroundColor: theme.palette.accent[200],
+    backgroundColor: theme.palette.green,
+    color: '#fff',
   },
 })
 

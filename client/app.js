@@ -44,6 +44,7 @@ const theme = createMuiTheme({
     // secondary: '#37474F',
     accent: pink,
     green: '#80bd01',
+    gray: '#e5e5e5',
     type: 'light',
   },
   typography: {

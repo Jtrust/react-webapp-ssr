@@ -17,7 +17,7 @@ import { AppState, TopicStore } from '../../store/store';
 
 import Container from '../layout/Container'
 import TopicListItem from './ListItem'
-import { tabs } from '../../util/variable-define'
+import { TABS } from '../../util/variable-define'
 
 // 在组件上使用 <Provider appState={appState}></Provider>传下来的数据
 
@@ -35,18 +35,24 @@ class TopicList extends React.Component {
     router: PropTypes.object,
   }
 
-  constructor() {
-    super()
-    this.clickListItem = this.clickListItem.bind(this)
-  }
+  // constructor() {
+  //   super()
+  // }
 
   componentDidMount() {
-    this.doSearch()
+    this.fetchTopic()
   }
 
-  doSearch() {
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.location.search !== this.props.location.search) {
+      this.fetchTopic(nextProps.location)
+    }
+  }
+
+  fetchTopic(location) {
     const { topicStore } = this.props
-    const tab = this.getTab()
+    const search = location ? location.search : undefined
+    const tab = this.getTab(search)
     topicStore.fetchTopics(tab)
   }
 
@@ -64,36 +70,36 @@ class TopicList extends React.Component {
    * @returns {Promise<any>}
    */
   bootstrap() {
-    const { appState } = this.props
-    console.log(appState);
-    /* return new Promise((resolve) => {
+    // const { appState } = this.props
+    // console.log(appState);
+    return new Promise((resolve) => {
       setTimeout(() => {
         const { appState } = this.props
         appState.count = 3
         resolve(true)
       }, 1000)
-    }) */
+    })
   }
 
 
-  clickListItem() {
-    const { appState } = this.props
-    console.log(appState);
+  goToTopic(id) {
+    // const { appState } = this.props
+    // console.log(appState);
+    const { router } = this.context
+    router.history.push(`/detail/${id}`)
   }
 
-  getTab() {
-    const { location } = this.props
-    const query = parse(location.search)
-
-
-    return query.tab || 'share'
+  getTab(search) {
+    const param = search || this.props.location.search
+    const query = parse(param)
+    return query.tab || 'all'
   }
 
   render() {
     const { topicStore } = this.props
     const { syncing } = topicStore
 
-    const tabIndex = this.getTab()
+    const tabValue = this.getTab()
 
 
     return (
@@ -102,22 +108,31 @@ class TopicList extends React.Component {
           <title>topicList</title>
           <meta name="description" content="this is topicList" />
         </Helmet>
-        <Tabs value={tabIndex} onChange={this.changeTab}>
+        <Tabs value={tabValue} onChange={this.changeTab}>
           {
-            Object.keys(tabs).map(t => <Tab key={t} label={tabs[t]} value={t} />)
+            Object.keys(TABS).map(t => <Tab key={t} label={TABS[t]} value={t} />)
           }
         </Tabs>
         <List>
           {topicStore.topics.map(item => (
             <TopicListItem
               key={item.id}
-              // onClick={this.clickListItem}
+              onClick={() => { this.goToTopic(item.id) }}
               topic={item}
             />
           ))}
         </List>
 
-        {syncing ? <div><CircularProgress /></div> : null}
+        {syncing ? (
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-around',
+            padding: '40px 0',
+          }}
+          >
+            <CircularProgress />
+          </div>
+        ) : null}
 
 
       </Container>
