@@ -40,6 +40,7 @@ class TopicList extends React.Component {
   // }
 
   componentDidMount() {
+    console.log(33);
     this.fetchTopic()
   }
 
@@ -84,7 +85,7 @@ class TopicList extends React.Component {
 
   goToTopic(id) {
     // const { appState } = this.props
-    // console.log(appState);
+    console.log(66, id);
     const { router } = this.context
     router.history.push(`/detail/${id}`)
   }
@@ -117,7 +118,10 @@ class TopicList extends React.Component {
           {topicStore.topics.map(item => (
             <TopicListItem
               key={item.id}
-              onClick={() => { this.goToTopic(item.id) }}
+              onClick={() => {
+                console.log(55, item);
+                this.goToTopic(item.id)
+              }}
               topic={item}
             />
           ))}

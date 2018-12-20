@@ -46,8 +46,8 @@ const Secondary = ({ topic, classes }) => (
 const StyledPrimary = withStyles(topicPrimaryStyle)(Primary)
 const StyledSecondary = withStyles(topicSecondaryStyle)(Secondary)
 
-const TopicListItem = ({ topic }) => (
-  <ListItem button>
+const TopicListItem = ({ topic, onClick }) => (
+  <ListItem button onClick={onClick}>
     <ListItemAvatar>
       <Avatar src={topic.author.avatar_url} />
     </ListItemAvatar>
@@ -72,7 +72,7 @@ Secondary.propTypes = {
   classes: PropTypes.object.isRequired,
 }
 TopicListItem.propTypes = {
-  // onClick: PropTypes.func.isRequired,
+  onClick: PropTypes.func.isRequired,
   topic: PropTypes.object.isRequired,
 }
 

@@ -9,6 +9,6 @@ export default () => (
   <Switch>
     <Route path="/" render={() => <Redirect to="/list" />} exact />
     <Route path="/list" component={TopicList} />
-    <Route path="/detail" component={TopicDetail} />
+    <Route path="/detail/:id" component={TopicDetail} />
   </Switch>
 )

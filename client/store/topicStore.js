@@ -1,6 +1,7 @@
 import {
   observable,
-  // toJs, computed,
+  // toJs,
+  computed,
   action, extendObservable,
 } from 'mobx'
 import { get } from '../util/http'
@@ -20,15 +21,28 @@ class TopicStore {
 
   @observable syncing
 
+  @observable details
+
   addTopic(topic) {
     this.topics.push(new Topic(createTopic(topic)))
   }
 
   // 是否正在请求数据
-  constructor({ syncing, topics } = { syncing: false, topics: [] }) {
+  constructor({ syncing = false, topics = [], details = [] } = {}) {
+  // constructor({ syncing, topics, details } = { syncing: false, topics: [], details: [] }) {
     this.topics = topics.map(topic => new Topic(createTopic(topic)))
+    this.details = details.map(topic => new Topic(createTopic(topic)))
     this.syncing = syncing
   }
+
+  @computed get detailsMap() {
+    return this.details.reduce((result, detail) => ({
+      ...result,
+      [detail.id]: detail,
+    }),
+    {})
+  }
+
 
   @action fetchTopics(tab) {
     return new Promise((resolve, reject) => {
@@ -52,6 +66,29 @@ class TopicStore {
         reject(err)
         this.syncing = false
       })
+    })
+  }
+
+  @action getTopicDetail(id) {
+    console.log('get topic id:', id) // eslint-disable-line
+    return new Promise((resolve, reject) => {
+      if (this.detailsMap[id]) {
+        resolve(this.detailsMap[id])
+      } else {
+        get(`/topic/${id}`, {
+          mdrender: false,
+        }).then((resp) => {
+          if (resp.success) {
+            const topic = new Topic(createTopic(resp.data), true)
+            this.details.push(topic)
+            resolve(topic)
+          } else {
+            reject()
+          }
+        }).catch((err) => {
+          reject(err)
+        })
+      }
     })
   }
 }
