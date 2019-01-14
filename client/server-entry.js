@@ -7,11 +7,11 @@ import JssProvider from 'react-jss/lib/JssProvider';
 import {
   MuiThemeProvider,
   createMuiTheme,
-  createGenerateClassName,
+  // createGenerateClassName,
 } from '@material-ui/core/styles';
-import green from '@material-ui/core/colors/green';
-import red from '@material-ui/core/colors/red';
 
+
+import { pink } from '@material-ui/core/colors/index';
 import App from './views/App'
 import { createStoreMap } from './store/store'
 
@@ -26,9 +26,26 @@ useStaticRendering(true)
 const sheetsManager = new Map();
 // Create a theme instance.
 const theme = createMuiTheme({
+  // palette: {
+  //   primary: green,
+  //   accent: red,
+  //   type: 'light',
+  // },
+  // typography: {
+  //   useNextVariants: true,
+  // },
   palette: {
-    primary: green,
-    accent: red,
+    primary: {
+      main: '#1b5e20',
+    },
+    secondary: {
+      main: '#37474F',
+    },
+    // primary: '#1b5e20',
+    // secondary: '#37474F',
+    accent: pink,
+    green: '#80bd01',
+    gray: '#e5e5e5',
     type: 'light',
   },
   typography: {
@@ -36,10 +53,10 @@ const theme = createMuiTheme({
   },
 });
 // Create a new class name generator.
-const generateClassName = createGenerateClassName();
+// const generateClassName = createGenerateClassName();
 
-export default (store, routerContext, url, sheetsRegistry) => (
-  <Provider {...store}>
+export default (stores, routerContext, url, sheetsRegistry, generateClassName) => (
+  <Provider {...stores}>
     <StaticRouter context={routerContext} location={url}>
       <JssProvider registry={sheetsRegistry} generateClassName={generateClassName}>
         <MuiThemeProvider theme={theme} sheetsManager={sheetsManager}>
@@ -49,5 +66,4 @@ export default (store, routerContext, url, sheetsRegistry) => (
     </StaticRouter>
   </Provider>
 )
-
 export { createStoreMap }

@@ -1,8 +1,8 @@
 import React from 'react'
 import { Route, Redirect, Switch } from 'react-router-dom'
 
-import TopicList from '../views/topicList/index'
-import TopicDetail from '../views/topicDetail/index'
+import TopicList from '../views/topicList/Index'
+import TopicDetail from '../views/topicDetail/Index'
 
 
 export default () => (

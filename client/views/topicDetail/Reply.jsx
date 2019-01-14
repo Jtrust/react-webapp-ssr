@@ -15,7 +15,7 @@ const Reply = ({ reply, classes }) => (
     </div>
     <div className={classes.right}>
       <span>{`${reply.author.loginname}  ${formatDate(reply.create_at, 'yy-mm-dd')}`}</span>
-      <p dangerouslySetInnerHTML={{ __html: marked(reply.content) }} /> {/*eslint-disable-line*/}
+      <div dangerouslySetInnerHTML={{ __html: marked(reply.content) }} /> {/*eslint-disable-line*/}
     </div>
   </div>
 )

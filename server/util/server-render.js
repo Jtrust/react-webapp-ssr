@@ -6,9 +6,12 @@ const serialize = require('serialize-javascript')
 
 // import { SheetsRegistry } from 'jss';
 const { SheetsRegistry } = require('jss')
+const {
+  createGenerateClassName,
+} = require('@material-ui/core/styles');
 
 const sheetsRegistry = new SheetsRegistry();
-
+const generateClassName = createGenerateClassName();
 
 const getStoreState = stores => Object.keys(stores).reduce((result, storeName) => {
   result[storeName] = stores[storeName].toJson()
@@ -19,7 +22,7 @@ module.exports = (bundle, template, req, res) => new Promise((resolve, reject) =
   const createApp = bundle.default
   const routerContext = {}
   const stores = createStoreMap()
-  const appCompt = createApp(stores, routerContext, req.url, sheetsRegistry)
+  const appCompt = createApp(stores, routerContext, req.url, sheetsRegistry, generateClassName)
 
   asyncBootstrap(appCompt).then(() => {
     if (routerContext.url) { // 如果 客户请求有重定向，则react-router会给routerContext添加一个url属性

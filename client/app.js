@@ -56,12 +56,16 @@ const theme = createMuiTheme({
 const generateClassName = createGenerateClassName();
 
 const appState = new AppState(initialState.appState)
-const topicStore = new TopicStore(initialState.topicStore)
+const topicState = new TopicStore(initialState.topicState)
+
+const stores = {
+  appState, topicState,
+}
 
 // 使用 ReactDOM.render() 来混合服务端渲染的容器已经被弃用，并且会在React 17 中删除。使用hydrate() 来代替。
 ReactDOM.hydrate(
 
-  <Provider appState={appState} topicStore={topicStore}>
+  <Provider {...stores}>
     <BrowserRouter>
       {/* <App /> */}
       <JssProvider generateClassName={generateClassName}>

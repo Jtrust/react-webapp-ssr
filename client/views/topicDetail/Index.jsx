@@ -20,16 +20,13 @@ import Container from '../layout/Container'
 import TopicStore from '../../store/topicStore'
 import { topicDetailStyle } from './styles'
 
-import Reply from './reply'
+import Reply from './Reply'
 import formatDate from '../../util/date-format'
 
-@inject((stores) => {
-  console.log(999, stores);
-  return {
-    topicStore: stores.topicStore,
-    appState: stores.appState,
-  }
-}) @observer
+@inject(stores => ({
+  topicState: stores.topicState,
+  appState: stores.appState,
+})) @observer
 class TopicDetail extends React.Component {
   static contextTypes = {
     router: PropTypes.object,
@@ -49,7 +46,7 @@ class TopicDetail extends React.Component {
   componentDidMount() {
     const { id } = this.props.match.params
     console.log('component did mount id:', id) // eslint-disable-line
-    this.props.topicStore.getTopicDetail(id).catch((err) => {
+    this.props.topicState.getTopicDetail(id).catch((err) => {
       console.log('detail did mount error:', err) // eslint-disable-line
     })
     setTimeout(() => {
@@ -61,16 +58,13 @@ class TopicDetail extends React.Component {
 
   getTopic() {
     const { id } = this.props.match.params
-    console.log(110, id);
-    console.log(111, this.props.topicStore.detailsMap);
-    console.log(112, this.props.topicStore.detailsMap[id]);
-    return this.props.topicStore.detailsMap[id]
+    return this.props.topicState.detailsMap[id]
   }
 
   asyncBootstrap() {
     console.log('topic detail invoked') // eslint-disable-line
     const { id } = this.props.match.params
-    return this.props.topicStore.getTopicDetail(id).then(() => true).catch((err) => {
+    return this.props.topicState.getTopicDetail(id).then(() => true).catch((err) => {
       throw err
     })
   }
@@ -126,7 +120,7 @@ class TopicDetail extends React.Component {
             <h3>{topic.title}</h3>
           </header>
           <section className={classes.body}>
-            <p dangerouslySetInnerHTML={{ __html: marked(topic.content) }} /> {/*eslint-disable-line*/}
+            <div dangerouslySetInnerHTML={{ __html: marked(topic.content) }} /> {/*eslint-disable-line*/}
           </section>
         </Container>
 
@@ -172,7 +166,7 @@ class TopicDetail extends React.Component {
                   toolbar: false,
                   autoFocus: true,
                   spellChecker: false,
-                  placeholder: '添加你的精彩回复',
+                  placeholder: '添加你的精彩回复!',
                 }}
               />
               <Button fab variant="contained" color="primary" onClick={this.handleReply} className={classes.replyButton}>
@@ -203,7 +197,7 @@ class TopicDetail extends React.Component {
 
 TopicDetail.wrappedComponent.propTypes = {
   appState: PropTypes.object.isRequired,
-  topicStore: PropTypes.instanceOf(TopicStore).isRequired,
+  topicState: PropTypes.instanceOf(TopicStore).isRequired,
 }
 
 TopicDetail.propTypes = {

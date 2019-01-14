@@ -13,7 +13,7 @@ import List from '@material-ui/core/List';
 import CircularProgress from '@material-ui/core/CircularProgress';
 // import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
-import { AppState, TopicStore } from '../../store/store';
+import { TopicStore } from '../../store/store';
 
 import Container from '../layout/Container'
 import TopicListItem from './ListItem'
@@ -29,7 +29,8 @@ const styles = theme => ({
 });
 
 
-@inject(({ appState, topicStore }) => ({ appState, topicStore })) @observer
+@inject(({ appState, topicState }) => ({ appState, topicState })) @observer
+// @inject(stores => ({ appState: stores.appState, topicState: stores.topicState })) @observer
 class TopicList extends React.Component {
   static contextTypes = {
     router: PropTypes.object,
@@ -40,7 +41,6 @@ class TopicList extends React.Component {
   // }
 
   componentDidMount() {
-    console.log(33);
     this.fetchTopic()
   }
 
@@ -50,11 +50,23 @@ class TopicList extends React.Component {
     }
   }
 
+  /**
+   * 函数名自定义  在服务端调用asyncBootstrap方法时，会先执行此异步方法，然后渲染
+   * 此方法常用于 数据初始化
+   * @returns {Promise<any>}
+   */
+  bootstrap() {
+    const query = parse(this.props.location.search)
+    const { tab } = query
+    return this.props.topicState.fetchTopics(tab || 'all').then(() => true).catch(() => false)
+  }
+
   fetchTopic(location) {
-    const { topicStore } = this.props
+    const { topicState } = this.props
     const search = location ? location.search : undefined
     const tab = this.getTab(search)
-    topicStore.fetchTopics(tab)
+
+    topicState.fetchTopics(tab)
   }
 
   changeTab = (e, value) => {
@@ -65,27 +77,9 @@ class TopicList extends React.Component {
     })
   }
 
-  /**
-   * 函数名自定义  在服务端调用asyncBootstrap方法时，会先执行此异步方法，然后渲染
-   * 此方法常用于 数据初始化
-   * @returns {Promise<any>}
-   */
-  bootstrap() {
-    // const { appState } = this.props
-    // console.log(appState);
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const { appState } = this.props
-        appState.count = 3
-        resolve(true)
-      }, 1000)
-    })
-  }
-
 
   goToTopic(id) {
     // const { appState } = this.props
-    console.log(66, id);
     const { router } = this.context
     router.history.push(`/detail/${id}`)
   }
@@ -97,8 +91,8 @@ class TopicList extends React.Component {
   }
 
   render() {
-    const { topicStore } = this.props
-    const { syncing } = topicStore
+    const { topicState } = this.props
+    const { syncing } = topicState
 
     const tabValue = this.getTab()
 
@@ -115,11 +109,10 @@ class TopicList extends React.Component {
           }
         </Tabs>
         <List>
-          {topicStore.topics.map(item => (
+          {topicState.topics.map(item => (
             <TopicListItem
               key={item.id}
               onClick={() => {
-                console.log(55, item);
                 this.goToTopic(item.id)
               }}
               topic={item}
@@ -145,8 +138,8 @@ class TopicList extends React.Component {
 }
 
 TopicList.wrappedComponent.propTypes = {
-  appState: PropTypes.instanceOf(AppState),
-  topicStore: PropTypes.instanceOf(TopicStore).isRequired,
+  // appState: PropTypes.instanceOf(AppState),
+  topicState: PropTypes.instanceOf(TopicStore).isRequired,
 }
 TopicList.propTypes = {
   location: PropTypes.object.isRequired,

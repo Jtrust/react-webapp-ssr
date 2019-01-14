@@ -1,36 +1,20 @@
 import {
   observable,
-  computed,
-  // autorun,
-  action,
+  // computed,
+  toJS,
+  // action,
 } from 'mobx'
 
 export default class AppState {
-  constructor({ count, name } = { count: 3, name: 'Tom' }) {
-    this.count = count
-    this.name = name
+  constructor({ user = {} } = { }) {
+    this.user = user
   }
 
-  @observable count
-
-  @observable name
-
-  @computed get msg() {
-    return `${this.name} says count is ${this.count}`
-  }
-
-  @action add() {
-    this.count += 1
-  }
-
-  @action changeName(value) {
-    this.name = value
-  }
+  @observable user
 
   toJson() {
     return {
-      count: this.count,
-      name: this.name,
+      user: toJS(this.user),
     }
   }
 }

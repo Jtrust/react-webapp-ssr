@@ -1,6 +1,6 @@
 import {
   observable,
-  // toJs,
+  toJS,
   computed,
   action, extendObservable,
 } from 'mobx'
@@ -10,10 +10,11 @@ import { topicSchema } from '../util/variable-define'
 const createTopic = topic => Object.assign({}, topicSchema, topic)
 class Topic {
   constructor(data) {
+    // console.log (55,this);
     extendObservable(this, data)
   }
 
-  @observable syncing = false
+  // @observable syncing = false
 }
 
 class TopicStore {
@@ -23,16 +24,21 @@ class TopicStore {
 
   @observable details
 
+  @observable tab
+
   addTopic(topic) {
     this.topics.push(new Topic(createTopic(topic)))
   }
 
   // 是否正在请求数据
-  constructor({ syncing = false, topics = [], details = [] } = {}) {
+  constructor({
+    syncing = false, topics = [], details = [], tab,
+  } = {}) {
   // constructor({ syncing, topics, details } = { syncing: false, topics: [], details: [] }) {
     this.topics = topics.map(topic => new Topic(createTopic(topic)))
     this.details = details.map(topic => new Topic(createTopic(topic)))
     this.syncing = syncing
+    this.tab = tab
   }
 
   @computed get detailsMap() {
@@ -43,29 +49,33 @@ class TopicStore {
     {})
   }
 
-
   @action fetchTopics(tab) {
     return new Promise((resolve, reject) => {
-      this.syncing = true
-      this.topics = []
-      get('/topics', {
-        mdrender: false,
-        tab,
-      }).then((resp) => {
-        if (resp.success) {
-          resp.data.forEach((topic) => {
-            this.addTopic(topic)
-          })
+      if (this.tab === tab && this.topics.length > 0) { // 说明已经发送过请求
+        resolve()
+      } else {
+        this.tab = tab
+        this.syncing = true
+        this.topics = []
+        get('/topics', {
+          mdrender: false,
+          tab,
+        }).then((resp) => {
+          if (resp.success) {
+            resp.data.forEach((topic) => {
+              this.addTopic(topic)
+            })
 
-          resolve()
-        } else {
-          reject()
-        }
-        this.syncing = false
-      }).catch((err) => {
-        reject(err)
-        this.syncing = false
-      })
+            resolve()
+          } else {
+            reject()
+          }
+          this.syncing = false
+        }).catch((err) => {
+          reject(err)
+          this.syncing = false
+        })
+      }
     })
   }
 
@@ -90,6 +100,17 @@ class TopicStore {
         })
       }
     })
+  }
+
+  toJson() {
+    return {
+      // page: this.page,
+      topics: toJS(this.topics),
+      syncing: toJS(this.syncing),
+      details: toJS(this.details),
+      // tab: toJS(this.tab),
+      tab: this.tab,
+    }
   }
 }
 

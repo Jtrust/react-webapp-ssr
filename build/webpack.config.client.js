@@ -51,6 +51,51 @@ if (isDev) {
   }
 
   config.plugins.push(new webpack.HotModuleReplacementPlugin())
+} else {
+  config.entry = {
+    app: path.resolve(__dirname, '../client/app.js'),
+    vendor: [
+      'react',
+      'react-dom',
+      'react-router-dom',
+      'mobx',
+      'mobx-react',
+      'axios',
+      'query-string',
+      'dateformat',
+      'marked',
+    ],
+  };
+  config.output.filename = '[name].[contenthash].js';
+  config.optimization = {
+    namedModules: true,
+    namedChunks: true,
+    runtimeChunk: {// runtimeChunk可以配置成true，single或者对象，用自动计算当前构建的一些基础chunk信息，类似之前版本中的manifest信息获取方式
+      name: 'manifest',
+    },
+    splitChunks: {
+      cacheGroups: {
+        vendors: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendor',
+          minSize: 3000,
+          minChunks: 1,
+          chunks: 'initial',
+          priority: 1, // 该配置项是设置处理的优先级，数值越大越优先处理
+        },
+        commons: {
+          test: /[\\/]client[\\/]/,
+          name: 'common',
+          minSize: 3000,
+          minChunks: 3,
+          chunks: 'initial',
+          priority: -1,
+          reuseExistingChunk: true, // 这个配置允许我们使用已经存在的代码块
+        },
+
+      },
+    },
+  }
 }
 
 module.exports = config
